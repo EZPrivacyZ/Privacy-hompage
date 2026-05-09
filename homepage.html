@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나만의 시작 페이지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f5f6f8;
+    --surface:   #ffffff;
+    --surface2:  #f0f1f4;
+    --border:    #e4e6eb;
+    --border-h:  #c8ccd6;
+    --accent:    #2563eb;
+    --accent-bg: #eff4ff;
+    --accent-dim:rgba(37,99,235,0.1);
+    --sec:       #0f766e;
+    --sec-bg:    #f0fdfa;
+    --sec-bdr:   #99f6e4;
+    --red:       #dc2626;
+    --red-bg:    #fef2f2;
+    --amber:     #d97706;
+    --amber-bg:  #fffbeb;
+    --purple:    #7c3aed;
+    --purple-bg: #f5f3ff;
+    --purple-bdr:#ddd6fe;
+    --green:     #15803d;
+    --green-bg:  #f0fdf4;
+    --green-bdr: #bbf7d0;
+    --text:      #111318;
+    --text-2:    #4b5563;
+    --text-3:    #9ca3af;
+    --sh-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+    --sh-md: 0 4px 12px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.04);
+    --r: 14px; --rs: 8px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Noto Sans KR',-apple-system,sans-serif;
+    background:var(--bg); color:var(--text);
+    min-height:100vh; -webkit-font-smoothing:antialiased;
+  }
+
+  /* Layout */
+  .page{max-width:1340px;margin:0 auto;padding:36px 28px 56px;}
+
+  /* Header */
+  header{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:28px; opacity:0; animation:fadeUp .5s ease .05s forwards;
+  }
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo-mark{
+    width:36px;height:36px;background:var(--accent);border-radius:10px;
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    box-shadow:0 2px 8px rgba(37,99,235,.3);
+  }
+  .logo-text{font-size:15px;font-weight:600;letter-spacing:-.3px;}
+  .logo-sub{font-size:11.5px;color:var(--text-3);font-weight:400;margin-top:1px;}
+  .hdr-r{text-align:right;}
+  .clock-t{
+    font-family:'Geist Mono',monospace; font-size:30px;
+    font-weight:600; letter-spacing:-.5px; line-height:1; color:var(--text);
+  }
+  .clock-d{font-size:11.5px;color:var(--text-3);margin-top:5px;}
+
+  /* Search */
+  .srch-wrap{margin-bottom:24px;opacity:0;animation:fadeUp .5s ease .12s forwards;}
+  .srch-box{
+    display:flex;align-items:center;
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--r);padding:0 16px;box-shadow:var(--sh-sm);
+    transition:border-color .18s,box-shadow .18s;
+  }
+  .srch-box:focus-within{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-dim),var(--sh-sm);
+  }
+  .srch-ico{color:var(--text-3);margin-right:10px;flex-shrink:0;display:flex;}
+  .srch-box input{
+    flex:1;background:none;border:none;outline:none;
+    font-family:'Noto Sans KR',sans-serif;font-size:14.5px;color:var(--text);padding:13px 0;
+  }
+  .srch-box input::placeholder{color:var(--text-3);}
+  .epills{display:flex;gap:4px;margin-left:8px;}
+  .epill{
+    padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:500;
+    color:var(--text-2);background:var(--surface2);border:1.5px solid var(--border);
+    cursor:pointer;transition:all .15s;
+  }
+  .epill:hover{border-color:var(--accent);color:var(--accent);}
+  .epill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  /* Main grid */
+  .mgrid{display:grid;grid-template-columns:296px 1fr;gap:18px;}
+
+  /* Sidebar */
+  .sidebar{display:flex;flex-direction:column;gap:14px;}
+
+  /* Card */
+  .card{
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--r);box-shadow:var(--sh-sm);overflow:hidden;
+  }
+  .c-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);}
+
+  /* Weather */
+  .weather-card{opacity:0;animation:fadeUp .5s ease .2s forwards;}
+  .w-hdr{padding:16px 18px 0;display:flex;align-items:center;justify-content:space-between;}
+  .w-body{padding:14px 18px 18px;}
+  .wloc{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);margin-bottom:14px;}
+  .wloc-dot{width:7px;height:7px;border-radius:50%;background:var(--sec);animation:pulse 2s infinite;flex-shrink:0;}
+  .wrow{display:flex;align-items:flex-end;gap:10px;margin-bottom:4px;}
+  .wico{font-size:50px;line-height:1;}
+  .wtemp{font-family:'Geist Mono',monospace;font-size:48px;font-weight:600;line-height:1;letter-spacing:-2px;}
+  .wunit{font-size:20px;font-weight:400;color:var(--text-3);margin-bottom:5px;}
+  .wdesc{font-size:12.5px;color:var(--text-2);margin-bottom:16px;}
+  .wstats{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    padding:14px 0;border-top:1.5px solid var(--border);border-bottom:1.5px solid var(--border);margin-bottom:14px;
+  }
+  .ws-lbl{font-size:10px;color:var(--text-3);margin-bottom:2px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;}
+  .ws-val{font-family:'Geist Mono',monospace;font-size:13.5px;font-weight:600;}
+  .wfcast{display:flex;gap:5px;}
+  .wfi{flex:1;text-align:center;background:var(--surface2);border-radius:var(--rs);padding:9px 3px;}
+  .wfi-d{font-size:10px;color:var(--text-3);margin-bottom:4px;font-weight:500;}
+  .wfi-i{font-size:17px;margin-bottom:3px;}
+  .wfi-t{font-family:'Geist Mono',monospace;font-size:10px;color:var(--text-2);}
+  .wload{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;height:170px;color:var(--text-3);font-size:12.5px;}
+
+  /* Links */
+  .links-card{opacity:0;animation:fadeUp .5s ease .28s forwards;}
+  .l-hdr{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;}
+  .l-body{padding:0 12px 14px;}
+  .lgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+  .qlink{
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    padding:11px 4px;border-radius:var(--rs);background:var(--surface2);
+    border:1.5px solid transparent;text-decoration:none;cursor:pointer;transition:all .15s;
+  }
+  .qlink:hover{border-color:var(--accent);background:var(--accent-bg);transform:translateY(-1px);box-shadow:var(--sh-sm);}
+  .ql-ico{font-size:20px;}
+  .ql-name{font-size:9.5px;color:var(--text-2);text-align:center;line-height:1.3;font-weight:500;}
+
+  /* News panel */
+  .news-panel{
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--r);box-shadow:var(--sh-sm);
+    display:flex;flex-direction:column;
+    opacity:0;animation:fadeUp .5s ease .22s forwards;
+  }
+  .n-top{
+    padding:16px 20px 12px;border-bottom:1.5px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:10px;
+  }
+  .ntabs{display:flex;gap:2px;background:var(--surface2);border-radius:10px;padding:3px;}
+  .ntab{
+    padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:500;
+    color:var(--text-2);cursor:pointer;border:none;background:transparent;transition:all .15s;
+    white-space:nowrap;
+  }
+  .ntab:hover{color:var(--text);}
+  .ntab.active{background:var(--surface);color:var(--text);box-shadow:var(--sh-sm);font-weight:600;}
+  .ntab[data-cat="sec"]{color:var(--sec);}
+  .ntab[data-cat="sec"].active{color:var(--sec);}
+  .ntab[data-cat="privacy"]{color:var(--purple);}
+  .ntab[data-cat="privacy"].active{color:var(--purple);}
+
+  .n-actions{display:flex;align-items:center;gap:8px;}
+  .live-pill{
+    display:flex;align-items:center;gap:5px;
+    font-size:11px;color:var(--red);font-weight:600;
+    background:var(--red-bg);padding:3px 9px;border-radius:20px;
+    border:1px solid #fecaca;
+  }
+  .ldot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite;}
+  .rbtn{
+    width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+    border:1.5px solid var(--border);border-radius:var(--rs);background:transparent;
+    cursor:pointer;color:var(--text-3);transition:all .15s;
+  }
+  .rbtn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+  .rbtn.spin svg{animation:spin .6s linear infinite;}
+
+  .n-body{flex:1;overflow-y:auto;padding:0 20px;}
+  .n-body::-webkit-scrollbar{width:3px;}
+  .n-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+
+  /* Security banner */
+  .sec-banner{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 14px;border-radius:var(--rs);margin:14px 0 4px;
+    border:1.5px solid;
+  }
+  .sec-banner.type-sec{background:var(--sec-bg);border-color:var(--sec-bdr);}
+  .sec-banner.type-privacy{background:var(--purple-bg);border-color:var(--purple-bdr);}
+  .sb-ico{font-size:22px;flex-shrink:0;}
+  .sb-txt{font-size:12px;line-height:1.5;font-weight:500;}
+  .sb-txt.type-sec{color:var(--sec);}
+  .sb-txt.type-privacy{color:var(--purple);}
+  .sb-txt strong{font-weight:700;}
+
+  /* News items */
+  .news-item{
+    display:flex;gap:14px;padding:15px 0;
+    border-bottom:1.5px solid var(--border);
+    text-decoration:none;cursor:pointer;transition:background .1s;
+    position:relative;
+  }
+  .news-item:last-child{border-bottom:none;}
+  .news-item:hover .nhl{color:var(--accent);}
+  .news-item.hi { /* high severity */ }
+  .news-item.hi .nidx{color:var(--red);}
+
+  .nidx{
+    font-family:'Geist Mono',monospace;font-size:11px;
+    color:var(--text-3);min-width:20px;padding-top:2px;font-weight:600;
+  }
+  .ncnt{flex:1;min-width:0;}
+
+  /* Badges */
+  .badge{
+    display:inline-flex;align-items:center;gap:3px;
+    padding:2px 8px;border-radius:4px;font-size:10.5px;
+    font-weight:600;letter-spacing:.2px;margin-bottom:6px;border:1px solid;
+  }
+  .b-sec     {background:var(--sec-bg);   color:var(--sec);   border-color:var(--sec-bdr);}
+  .b-privacy {background:var(--purple-bg);color:var(--purple);border-color:var(--purple-bdr);}
+  .b-breaking{background:var(--red-bg);   color:var(--red);   border-color:#fecaca;}
+  .b-tech    {background:var(--accent-bg);color:var(--accent);border-color:#bfdbfe;}
+  .b-world   {background:var(--amber-bg); color:var(--amber); border-color:#fde68a;}
+  .b-biz     {background:var(--green-bg); color:var(--green); border-color:var(--green-bdr);}
+  .b-science {background:var(--purple-bg);color:var(--purple);border-color:var(--purple-bdr);}
+
+  .nhl{font-size:13.5px;font-weight:500;line-height:1.55;color:var(--text);margin-bottom:5px;transition:color .15s;}
+  .nmeta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-3);}
+  .nsrc{color:var(--text-2);font-weight:500;}
+  .mdot{width:3px;height:3px;border-radius:50%;background:var(--border-h);}
+
+  /* Skeleton */
+  .skel{
+    background:linear-gradient(90deg,var(--surface2) 25%,#e8eaee 50%,var(--surface2) 75%);
+    background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;
+  }
+  .sk-item{padding:15px 0;border-bottom:1.5px solid var(--border);}
+  .sk-row{display:flex;gap:14px;}
+  .sk-n{width:18px;height:11px;border-radius:4px;margin-top:2px;flex-shrink:0;}
+  .sk-b{height:15px;width:55px;margin-bottom:7px;}
+  .sk-t{height:13px;width:100%;margin-bottom:4px;}
+  .sk-t2{height:13px;width:65%;margin-bottom:7px;}
+  .sk-m{height:11px;width:105px;}
+
+  /* Spinner */
+  .spinner{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+
+  /* Animations */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.45;transform:scale(.7);}}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+  @media(max-width:900px){
+    .mgrid{grid-template-columns:1fr;}
+    header{flex-direction:column;align-items:flex-start;gap:10px;}
+    .hdr-r{text-align:left;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-mark">🏠</div>
+      <div>
+        <div class="logo-text">나만의 시작 페이지</div>
+        <div class="logo-sub">보안 · 개인정보 · 뉴스 · 날씨</div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <div class="clock-t" id="clockT">--:--:--</div>
+      <div class="clock-d" id="clockD"></div>
+    </div>
+  </header>
+
+  <!-- Search -->
+  <div class="srch-wrap">
+    <div class="srch-box">
+      <span class="srch-ico">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </span>
+      <input id="srchInput" type="text" placeholder="검색어 입력 후 Enter" autocomplete="off">
+      <div class="epills">
+        <button class="epill active" data-e="google">Google</button>
+        <button class="epill" data-e="naver">Naver</button>
+        <button class="epill" data-e="bing">Bing</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="mgrid">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <!-- Weather -->
+      <div class="card weather-card">
+        <div class="w-hdr"><span class="c-label">현재 날씨</span></div>
+        <div class="w-body">
+          <div class="wload" id="wLoad"><div class="spinner"></div><span>위치 감지 중…</span></div>
+          <div id="wCnt" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="card links-card">
+        <div class="l-hdr"><span class="c-label">즐겨찾기</span></div>
+        <div class="l-body">
+          <div class="lgrid" id="lgrid"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- News -->
+    <div class="news-panel">
+      <div class="n-top">
+        <div class="ntabs" id="ntabs">
+          <button class="ntab active" data-cat="sec">🔒 보안</button>
+          <button class="ntab" data-cat="privacy">🛡️ 개인정보</button>
+          <button class="ntab" data-cat="all">전체</button>
+          <button class="ntab" data-cat="tech">테크</button>
+          <button class="ntab" data-cat="world">세계</button>
+          <button class="ntab" data-cat="biz">경제</button>
+        </div>
+        <div class="n-actions">
+          <div class="live-pill"><div class="ldot"></div>LIVE</div>
+          <button class="rbtn" id="rbtn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="n-body" id="nList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Clock ──────────────────────────────────────────────────
+const WD=['일','월','화','수','목','금','토'];
+const MO=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+function tick(){
+  const n=new Date();
+  document.getElementById('clockT').textContent=
+    [n.getHours(),n.getMinutes(),n.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':');
+  document.getElementById('clockD').textContent=
+    `${n.getFullYear()}. ${MO[n.getMonth()]} ${n.getDate()}일 (${WD[n.getDay()]}요일)`;
+}
+tick(); setInterval(tick,1000);
+
+// ── Search ─────────────────────────────────────────────────
+const ENG={
+  google:'https://www.google.com/search?q=',
+  naver:'https://search.naver.com/search.naver?query=',
+  bing:'https://www.bing.com/search?q=',
+};
+let eng='google';
+document.querySelectorAll('.epill').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.epill').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); eng=b.dataset.e;
+  });
+});
+document.getElementById('srchInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.value.trim()){
+    window.open(ENG[eng]+encodeURIComponent(e.target.value.trim()),'_blank');
+    e.target.value='';
+  }
+});
+
+// ── Quick Links ────────────────────────────────────────────
+const LINKS=[
+  {ico:'🔒',name:'KISA 보안공지',  url:'https://www.kisa.or.kr/public/notice/notice_List.jsp'},
+  {ico:'🛡️',name:'개인정보보호위', url:'https://www.pipc.go.kr'},
+  {ico:'⚠️',name:'Have I Been\nPwned', url:'https://haveibeenpwned.com'},
+  {ico:'🔍',name:'CVE 검색',       url:'https://cve.mitre.org'},
+  {ico:'📰',name:'보안뉴스',        url:'https://www.boannews.com'},
+  {ico:'📧',name:'Gmail',           url:'https://mail.google.com'},
+  {ico:'💬',name:'Claude AI',       url:'https://claude.ai'},
+  {ico:'▶️',name:'YouTube',         url:'https://youtube.com'},
+];
+const lg=document.getElementById('lgrid');
+LINKS.forEach(l=>{
+  const a=document.createElement('a');
+  a.className='qlink'; a.href=l.url; a.target='_blank';
+  a.innerHTML=`<span class="ql-ico">${l.ico}</span><span class="ql-name">${l.name}</span>`;
+  lg.appendChild(a);
+});
+
+// ── Weather ────────────────────────────────────────────────
+const WC={
+  0:['☀️','맑음'],1:['🌤️','대체로 맑음'],2:['⛅','부분 흐림'],3:['☁️','흐림'],
+  45:['🌫️','안개'],48:['🌫️','짙은 안개'],
+  51:['🌦️','이슬비'],53:['🌦️','이슬비'],55:['🌧️','강한 이슬비'],
+  61:['🌧️','약한 비'],63:['🌧️','비'],65:['🌧️','강한 비'],
+  71:['🌨️','약한 눈'],73:['🌨️','눈'],75:['❄️','강한 눈'],
+  80:['🌦️','소나기'],81:['🌦️','소나기'],82:['⛈️','폭우'],
+  95:['⛈️','뇌우'],99:['⛈️','강한 뇌우'],
+};
+async function loadWeather(){
+  try{
+    const g=await(await fetch('https://ipapi.co/json/')).json();
+    const{latitude:lat,longitude:lon,city}=g;
+    const d=await(await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`+
+      `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weathercode,apparent_temperature`+
+      `&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=5`
+    )).json();
+    const cur=d.current,dl=d.daily;
+    const[ico,desc]=WC[cur.weathercode]||['🌡️','정보없음'];
+    const fc=dl.time.slice(1,5).map((t,i)=>{
+      const day=new Date(t);
+      const[fi]=WC[dl.weathercode[i+1]]||['🌡️'];
+      return `<div class="wfi">
+        <div class="wfi-d">${WD[day.getDay()]}</div>
+        <div class="wfi-i">${fi}</div>
+        <div class="wfi-t">${Math.round(dl.temperature_2m_min[i+1])}·${Math.round(dl.temperature_2m_max[i+1])}°</div>
+      </div>`;
+    }).join('');
+    document.getElementById('wLoad').style.display='none';
+    const wc=document.getElementById('wCnt');
+    wc.style.display='block';
+    wc.innerHTML=`
+      <div class="wloc"><div class="wloc-dot"></div><span>${city||'현재 위치'}</span></div>
+      <div class="wrow">
+        <div class="wico">${ico}</div>
+        <div class="wtemp">${Math.round(cur.temperature_2m)}<span class="wunit">°C</span></div>
+      </div>
+      <div class="wdesc">${desc} &nbsp;·&nbsp; 체감 ${Math.round(cur.apparent_temperature)}°C</div>
+      <div class="wstats">
+        <div><div class="ws-lbl">습도</div><div class="ws-val">${cur.relative_humidity_2m}%</div></div>
+        <div><div class="ws-lbl">바람</div><div class="ws-val">${cur.wind_speed_10m}km/h</div></div>
+        <div><div class="ws-lbl">최고</div><div class="ws-val">${Math.round(dl.temperature_2m_max[0])}°C</div></div>
+        <div><div class="ws-lbl">최저</div><div class="ws-val">${Math.round(dl.temperature_2m_min[0])}°C</div></div>
+      </div>
+      <div class="wfcast">${fc}</div>`;
+  }catch{
+    document.getElementById('wLoad').innerHTML=
+      '<span style="font-size:12px;color:var(--text-3);text-align:center">날씨 정보를<br>불러올 수 없습니다</span>';
+  }
+}
+loadWeather();
+
+// ── News ───────────────────────────────────────────────────
+let curCat='sec', busy=false;
+
+const BADGE_MAP={
+  '보안':'sec','개인정보':'privacy','속보':'breaking',
+  '테크':'tech','세계':'world','경제':'biz','과학':'science',
+};
+const CAT={
+  sec:    {prompt:'사이버 보안, 해킹, 랜섬웨어, 취약점, 데이터 침해, APT 공격, 악성코드, 정보보안',hint:'카테고리는 "보안"만 사용'},
+  privacy:{prompt:'개인정보 보호, 데이터 유출, GDPR, 개인정보처리방침, 프라이버시 침해, 개인정보보호법, PIPA',hint:'카테고리는 "개인정보"만 사용'},
+  all:    {prompt:'정치, 경제, 테크, 세계, 사회, 보안, 개인정보 등 전체',hint:'카테고리는 속보/테크/세계/경제/보안/개인정보 중 적절히'},
+  tech:   {prompt:'테크/IT, AI, 스타트업, 반도체, 빅테크',hint:'카테고리는 "테크"만 사용'},
+  world:  {prompt:'세계/국제, 외교, 글로벌 이슈',hint:'카테고리는 "세계"만 사용'},
+  biz:    {prompt:'경제, 주식, 금융, 기업, 산업',hint:'카테고리는 "경제"만 사용'},
+};
+
+const BANNERS={
+  sec:    {cls:'type-sec',    ico:'🔒',title:'보안 뉴스 우선 표시',desc:'사이버 위협·침해사고·취약점 등 최신 보안 이슈를 모았습니다.'},
+  privacy:{cls:'type-privacy',ico:'🛡️',title:'개인정보 보호 뉴스 우선 표시',desc:'데이터 유출·프라이버시·개인정보보호법 관련 최신 동향입니다.'},
+};
+
+function skeletons(){
+  return Array(7).fill(0).map(()=>`
+    <div class="sk-item">
+      <div class="sk-row">
+        <div class="skel sk-n"></div>
+        <div style="flex:1">
+          <div class="skel sk-b"></div>
+          <div class="skel sk-t"></div>
+          <div class="skel sk-t2"></div>
+          <div class="skel sk-m"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function loadNews(cat){
+  if(busy)return; busy=true;
+  const list=document.getElementById('nList');
+  list.innerHTML=skeletons();
+  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+  const c=CAT[cat];
+  const isSpecial=cat==='sec'||cat==='privacy';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1200,
+        system:`당신은 뉴스 큐레이터입니다. 오늘(${today}) 기준 실제로 있을 법한 주요 뉴스 헤드라인을 JSON 배열로만 응답하세요. 마크다운·설명·코드블록 없이 순수 JSON만 출력하세요.
+형식: [{"category":"카테고리","headline":"헤드라인(한국어,구체적,60자 이내)","source":"언론사명","time":"X분 전 또는 X시간 전","severity":"high|medium|low"}]`,
+        messages:[{role:'user',content:`${c.prompt} 분야 뉴스 헤드라인 9개를 생성해주세요. ${c.hint}. 실제 뉴스처럼 구체적·사실적으로 작성해주세요.${isSpecial?' severity는 실제 위험도에 따라 high/medium/low로 구분하세요.':''}`}]
+      })
+    });
+    const data=await r.json();
+    const raw=data.content.map(b=>b.text||'').join('');
+    const items=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    const bn=BANNERS[cat];
+    const banner=bn?`<div class="sec-banner ${bn.cls}">
+      <div class="sb-ico">${bn.ico}</div>
+      <div class="sb-txt ${bn.cls}"><strong>${bn.title}</strong><br>${bn.desc}</div>
+    </div>`:'';
+
+    list.innerHTML=banner+items.map((a,i)=>{
+      const bc=BADGE_MAP[a.category]||'tech';
+      const isHigh=isSpecial&&a.severity==='high';
+      return `<a class="news-item${isHigh?' hi':''}"
+        href="https://search.naver.com/search.naver?where=news&query=${encodeURIComponent(a.headline)}"
+        target="_blank">
+        <div class="nidx">${String(i+1).padStart(2,'0')}</div>
+        <div class="ncnt">
+          <span class="badge b-${bc}">${a.category}${isHigh?' 🔴':''}</span>
+          <div class="nhl">${a.headline}</div>
+          <div class="nmeta">
+            <span class="nsrc">${a.source}</span>
+            <span class="mdot"></span>
+            <span>${a.time}</span>
+          </div>
+        </div>
+      </a>`;
+    }).join('');
+  }catch{
+    list.innerHTML='<div style="padding:48px 0;text-align:center;color:var(--text-3);font-size:13px;">뉴스를 불러올 수 없습니다.<br>잠시 후 다시 시도해 주세요.</div>';
+  }
+  busy=false;
+}
+
+document.getElementById('ntabs').addEventListener('click',e=>{
+  const t=e.target.closest('.ntab');
+  if(!t)return;
+  document.querySelectorAll('.ntab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); curCat=t.dataset.cat; loadNews(curCat);
+});
+
+const rb=document.getElementById('rbtn');
+rb.addEventListener('click',()=>{
+  if(busy)return;
+  rb.classList.add('spin');
+  loadNews(curCat).then(()=>rb.classList.remove('spin'));
+});
+
+loadNews('sec');
+</script>
+</body>
+</html>
